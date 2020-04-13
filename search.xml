@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>关于Chrome浏览器如何清除某个特定网页的缓存</title>
+    <url>/2020/04/13/Chrome%E6%B8%85%E9%99%A4%E7%89%B9%E5%AE%9A%E7%BD%91%E9%A1%B5%E7%BC%93%E5%AD%98/</url>
+    <content><![CDATA[<p>在平常的使用当中，浏览器缓存能够加快页面的加载速度，能够保存表单数据类似于填写过的密码，使得用户的体验感大幅的提升。</p>
+<p>但对于开发网站页面的前端开发者而言，浏览器的自动缓存功能并不一定惹人喜欢。</p>
+<p>它常常会使得页面变成”不可变化的”模式。由于缓存存在的缘故，在更新代码后，通过浏览器去测试页面时页面常常不会显示我更改的代码模块，我就经常受到这样的困扰，但是手动去清空所有的缓存又会影响平常进其他网站时候的体验，就挺难受的。</p>
+<p>那么问题来了，有没有一种可以只单独清空一个网站的缓存的办法呢？</p>
+<a id="more"></a>
+
+<p>答案是有的，通过一段时间折腾，误打误撞的被我发现chrome单独清空一个网站缓存的办法，方法如下：</p>
+<p>1、先打开要清空缓存的网站。（这里拿万能度娘做演示）<br><img src="https://raw.githubusercontent.com/hibiyo/cloudimg/master/blog/hexoUse/2020_04_13/2020_04_13-1.png" alt=""></p>
+<p>2、按下F12键开启开发者模式<br><img src="https://raw.githubusercontent.com/hibiyo/cloudimg/master/blog/hexoUse/2020_04_13/2020_04_13-2.png" alt=""></p>
+<p>3、右键页面的刷新按钮，会出现三个选项：正常重新加载，硬性重新加载，清空缓存并硬性重新加载<br><img src="https://raw.githubusercontent.com/hibiyo/cloudimg/master/blog/hexoUse/2020_04_13/2020_04_13-3.png" alt=""></p>
+<p>解释一下这三个的区别：</p>
+<pre><code>正常重新加载 Ctrl+R：正常重新加载。 
+硬性重新加载：Ctrl+Shift+R:浅层次的清除历史记录，但不一定缓存完全清除。(Ctrl+F5)同理。 
+清空缓存并硬性重新加载：可以深层次的清除所有的缓存。(建议用这个)</code></pre>]]></content>
+      <categories>
+        <category>chrome</category>
+      </categories>
+      <tags>
+        <tag>chrome</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>JavaScript:闭包</title>
+    <url>/2020/04/13/%E9%97%AD%E5%8C%85%E7%9A%84%E6%A6%82%E5%BF%B5/</url>
+    <content><![CDATA[<p>闭包（Closure）是JavaScript语言的一个难点，也是它的特色，很多的高级应用都要依靠闭包实现。</p>
+<p>下面是我的学习笔记：</p>
+<h2 id="一、变量的作用域"><a href="#一、变量的作用域" class="headerlink" title="一、变量的作用域"></a>一、变量的作用域</h2><p>要理解闭包，首先必须理解JavaScript特殊的变量作用域。</p>
+<p>变量的作用域无非就是两种：全局变量和局部变量。</p>
+<p>JavaScript语言的特殊之处，就在于函数内部可以直接读取全局变量。</p>
+<pre><code>var n = 10;
+function f1() {
+    alert(n);
+}
+f1(); // 返回10</code></pre><p>另一方面，在函数外部自然无法读取函数内的局部变量。</p>
+<pre><code>function f1() {
+    var = 20;
+}
+alert(n); // error</code></pre><p>这里有一个地方需要注意，函数内部声明変量的吋候，一定要使用var命令。如果不用的活，你实际上声明了一个全局変量!</p>
+<pre><code>function f1() {
+    n = 30;
+}
+f1();
+alert(n) // 返回30</code></pre><a id="more"></a>
+
+<h2 id="二、如何从外部读取局部变量？"><a href="#二、如何从外部读取局部变量？" class="headerlink" title="二、如何从外部读取局部变量？"></a>二、如何从外部读取局部变量？</h2><p>出于种种原因，我们有的时候需要得到函数内的局部变量。但是，已经说过了，正常的情况下，这是办不到的，只有通过变通的方法才能实现。</p>
+<p>那就是在函数的内部，再定义一个函数。</p>
+<pre><code>function f1() {
+    var = 40;
+    function f2() {
+        alert(n); // 返回40
+    }
+}</code></pre><p>在上面的代码中，函数f2就被包括在函数f1内部，这时f1内部的所有局部变量，对f2都是可见的。但是反过来就不行，f2内部的局部变量，对f1就是不可见的。这就是Javascript语言特有的”链式作用域结构(chain scope)，子对象会一级一级地向上寻找所有父对象的变量。所以，父对象的所有变量，对子对象都是可见的，反之则不成立。</p>
+<p>既然f2可以读取f1中的局部变量，那么只要把f2作为返回值，我们不就可以在f1外部读取它的内部变量了吗!</p>
+<pre><code>function f1() {
+    var n = 50;
+    function f2() {
+        alert(n);
+    }
+    return f2;
+}
+var result = f1();
+result(); // 返回50</code></pre><h2 id="三、闭包的概念"><a href="#三、闭包的概念" class="headerlink" title="三、闭包的概念"></a>三、闭包的概念</h2><p>在各种专业文献上的“闭包”（closure）定义非常的抽象，很难看懂。我的理解是，闭包就是能够读取其他函数内部变量的函数。</p>
+<p>由于在JavaScript语言中，只有函数内部的子函数才能读取局部变量，因此可以把闭包简单理解成“定义在一个函数内部的函数”。</p>
+<p>所以，在本质上，闭包就是将函数内部和函数外部连接起来的一座桥梁。</p>
+<h2 id="四、闭包的用途"><a href="#四、闭包的用途" class="headerlink" title="四、闭包的用途"></a>四、闭包的用途</h2><p>闭包可以用在许多的方面。它的最大用处有两个，一个是前面提到的可以读取函数内部的变量，另一个就是让这些变量的值始终保持在内存中。</p>
+<p>怎么来理解这句话呢？请看以下的代码。</p>
+<pre><code>function f1() {
+    var = 999;
+    nAdd = function(){n+=1}
+    function f2() {
+        alert(n);
+    }
+    return f2;
+}
+var result = f1();
+result(); // 返回999
+nAdd();
+result(); // 返回1000</code></pre><p>在这段代码中，result实际上就是闭包f2函数。它一共运行了两次，第一次的值是999，第二次的值是1000。这证明了，函数f1中的局部变量n一直保存在内存中，并没有在f1调用后被自动清除。</p>
+<p>为什么会这样呢？原因在于f1是f2的父函数，而f2被赋给了一个全局变量result，这导致了f2始终在内存中，而f2的存在依赖于f1，因此f1也始终在内存中，不会再调用结束后，被垃圾回收机制（garbage collection）回收。</p>
+<p>这段代码中另一个值得注意的地方，就是”nAdd = function(){n+=1}”这一行，首先再nAdd前面没有使用var关键字，因此nAdd是一个全局变量，而不是局部变量。其次，nAdd的值是一个匿名函数（anonymous function），而这个匿名函数本身也是一个闭包，nAdd可以在函数外部对函数内部的局部变量进行操作。</p>
+<h2 id="五、使用闭包的注意点"><a href="#五、使用闭包的注意点" class="headerlink" title="五、使用闭包的注意点"></a>五、使用闭包的注意点</h2><p>1、由于闭包会使得函数中的变量都被保存在内存中，内存消耗很大，所以不能滥用闭包，否则会造成网页的性能问题，在IE中可能导致内存泄露。解决方法是，在退出函数之前，将不使用的局部变量全部删除。</p>
+<p>2、闭包会在父函数外部改变父函数内部变量的值。所以，如果当把父函数当作对象(object) 使用，把闭包当作它的公用方法(Public Method)，把内部变量当作它的私有属性(privatevalue)，这时一定要小心，不要随便改变父函数内部变量的值。</p>
+]]></content>
+      <categories>
+        <category>JavaScript</category>
+      </categories>
+      <tags>
+        <tag>JavaScript</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>hexo主题的github地址（clone）</title>
+    <url>/2020/03/28/hexo%E5%8D%9A%E5%AE%A2%E4%B8%BB%E9%A2%98%E6%8E%A8%E8%8D%90/</url>
+    <content><![CDATA[<h2 id="官网主题地址"><a href="#官网主题地址" class="headerlink" title="官网主题地址"></a>官网主题地址</h2><p><a href="https://hexo.io/themes/" target="_blank" rel="noopener">官网主题示例演示</a></p>
+<p>主题非常的多，下面仅列出一些本人比较喜欢也常用的几个地址：</p>
+<h2 id="indigo"><a href="#indigo" class="headerlink" title="indigo"></a>indigo</h2><pre><code>git clone https://github.com/yscoder/hexo-theme-indigo.git themes/indigo</code></pre><h2 id="next"><a href="#next" class="headerlink" title="next"></a>next</h2><pre><code>git clone https://github.com/iissnan/hexo-theme-next themes/next</code></pre><h2 id="yelee"><a href="#yelee" class="headerlink" title="yelee"></a>yelee</h2><pre><code>git clone https://github.com/MOxFIVE/hexo-theme-yelee.git themes/yelee</code></pre><a id="more"></a>
+
+<h2 id="maupassant"><a href="#maupassant" class="headerlink" title="maupassant"></a>maupassant</h2><pre><code>git clone https://github.com/tufu9441/maupassant-hexo.git themes/maupassant</code></pre><h2 id="clexy"><a href="#clexy" class="headerlink" title="clexy"></a>clexy</h2><pre><code>git clone https://github.com/mkkhedawat/clexy themes/clexy</code></pre><h2 id="clean-blog"><a href="#clean-blog" class="headerlink" title="clean-blog"></a>clean-blog</h2><pre><code>git clone https://github.com/klugjo/hexo-theme-clean-blog.git themes/clean-blog</code></pre><h2 id="cyanstyle"><a href="#cyanstyle" class="headerlink" title="cyanstyle"></a>cyanstyle</h2><pre><code>git clone https://github.com/wizardforcel/hexo-theme-cyanstyle.git themes/cyanstyle</code></pre><h2 id="freemind"><a href="#freemind" class="headerlink" title="freemind"></a>freemind</h2><pre><code>git clone https://github.com/wzpan/hexo-theme-freemind.git themes/freemind</code></pre><h2 id="icarus"><a href="#icarus" class="headerlink" title="icarus"></a>icarus</h2><pre><code>git clone https://github.com/ppoffice/hexo-theme-icarus.git themes/icarus</code></pre><h2 id="lite"><a href="#lite" class="headerlink" title="lite"></a>lite</h2><pre><code>git clone https://github.com/HeskeyBaozi/hexo-theme-lite themes/lite</code></pre><h2 id="切换主题"><a href="#切换主题" class="headerlink" title="切换主题"></a>切换主题</h2><pre><code>1. 下载主题</code></pre><p><img src="https://raw.githubusercontent.com/hibiyo/cloudimg/master/blog/hexoUse/1.png" alt=""></p>
+<pre><code>2. 修改配置</code></pre><p><img src="https://raw.githubusercontent.com/hibiyo/cloudimg/master/blog/hexoUse/2.png" alt=""></p>
+<pre><code>3. 重启服务</code></pre><p><img src="https://raw.githubusercontent.com/hibiyo/cloudimg/master/blog/hexoUse/3.png" alt=""></p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+        <category>主题</category>
+      </categories>
+      <tags>
+        <tag>hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>微信小程序报错Error:EEXIST:file already exists, open&#39;C:\xxx\app.js</title>
+    <url>/2020/04/05/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F%E7%89%88%E6%9C%ACbug/</url>
+    <content><![CDATA[<h3 id="问题：使用微信开发者工具上传小程序代码，提示报错"><a href="#问题：使用微信开发者工具上传小程序代码，提示报错" class="headerlink" title="问题：使用微信开发者工具上传小程序代码，提示报错"></a>问题：使用微信开发者工具上传小程序代码，提示报错</h3><p><img src="https://raw.githubusercontent.com/hibiyo/cloudimg/master/blog/hexoUse/2020_04_0520_0405_1.png" alt=""></p>
+<p>在微信开发工具的模拟机上可以正常编译，但在真机调试时遇到此错误并且试了很多办法没有解决，最后发现与微信开发者工具的版本有关。</p>
+<a id="more"></a>
+
+<h3 id="解决方法："><a href="#解决方法：" class="headerlink" title="解决方法："></a>解决方法：</h3><p><strong>将微信开发者工具更换为稳定版</strong></p>
+<pre><code>1.打开微信官方文档，找到工具一栏，点击微信开发者工具连接</code></pre><p><img src="https://raw.githubusercontent.com/hibiyo/cloudimg/master/blog/hexoUse/2020_04_0520_0405_5.png" alt=""></p>
+<pre><code>2.在跳转的页面下载稳定版的微信开发者工具并安装</code></pre><p><img src="https://raw.githubusercontent.com/hibiyo/cloudimg/master/blog/hexoUse/2020_04_0520_0405_3.png" alt=""></p>
+<pre><code>3.然后上传就没有问题啦</code></pre><p><img src="https://raw.githubusercontent.com/hibiyo/cloudimg/master/blog/hexoUse/2020_04_0520_0405_4.png" alt=""></p>
+]]></content>
+      <categories>
+        <category>微信小程序</category>
+        <category>报错</category>
+      </categories>
+      <tags>
+        <tag>微信小程序</tag>
+        <tag>Error</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>我的第一篇博客，简单聊聊</title>
+    <url>/2020/03/28/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/</url>
+    <content><![CDATA[<h2 id="为什么要写博客"><a href="#为什么要写博客" class="headerlink" title="为什么要写博客"></a>为什么要写博客</h2><p>自从开始学习IT技术以来，就一直想做一个属于自己的网站。主要是想记录下自己碰到的技术难题和解决办法以便更好地去学习和工作，同时还可以记录下自己的成长经历，以后看看也会有所感触吧。更重要的是还可以拿它来装个逼，哈哈。但是老是控制不住自己的懒癌发作，一直拖到现在才搞出来，不管怎么样也算有个自己的小窝。希望以后能坚持来更新文章。</p>
+<h2 id="博客的搭建"><a href="#博客的搭建" class="headerlink" title="博客的搭建"></a>博客的搭建</h2><p>现在搭建一个个人博客其实没有多么难，结合各种工具和使用教程噼里啪啦一阵子就完事了。简单来说就是github+hexo。github主要用到的是它的github page；hexo能够快速的搭建起博客框架，然后使用markdown来编写博客。</p>
+<a id="more"></a>
+
+<h2 id="github-page"><a href="#github-page" class="headerlink" title="github page"></a>github page</h2><h3 id="不了解git的同学请戳这里："><a href="#不了解git的同学请戳这里：" class="headerlink" title="不了解git的同学请戳这里："></a>不了解git的同学请戳这里：</h3><ul>
+<li><a href="https://git-scm.com/" target="_blank" rel="noopener">git官网</a></li>
+<li><a href="https://www.runoob.com/git/git-tutorial.html" target="_blank" rel="noopener">菜鸟教程git教程</a></li>
+</ul>
+<p><a href="https://pages.github.com/" target="_blank" rel="noopener">github Pages</a>可以被认为是用户编写的、托管在github上的静态网页，用于介绍用户（团队）本身或项目。</p>
+<h3 id="那世间美女千万个，为什么要选这一个呢："><a href="#那世间美女千万个，为什么要选这一个呢：" class="headerlink" title="那世间美女千万个，为什么要选这一个呢："></a>那世间美女千万个，为什么要选这一个呢：</h3><ul>
+<li><strong>实用</strong>。 Github Pages稳定、免费，自带版本控制，可控性强。</li>
+<li><strong>趋势</strong>。 Git是一种趋势，是一个圈子，鼓励自己踏入圈子，学习使用。<h2 id="hexo"><a href="#hexo" class="headerlink" title="hexo"></a>hexo</h2><a href="https://hexo.io/zh-cn/" target="_blank" rel="noopener">hexo</a>是一个基于Node.js的静态博客程序，可以方便的生成静态网页托管在github上。</li>
+</ul>
+<p>官方的话就是：</p>
+<pre><code>快速、简单且功能强大的 Node.js 博客框架。
+A fast, simple &amp; powerful blog framework, powered by Node.js.</code></pre><h3 id="那这位美女的优势又在哪里呢："><a href="#那这位美女的优势又在哪里呢：" class="headerlink" title="那这位美女的优势又在哪里呢："></a>那这位美女的优势又在哪里呢：</h3><ul>
+<li><strong>轻</strong>。 轻量级，高扩展性。</li>
+<li><strong>简</strong>。 没用过Jekyll，据说相比而言Hexo命令更加简单，对中文支持更好。</li>
+<li><strong>火</strong>。 相对于其他的博客框架，hexo使用的人数较多，在遇到问题时比较容易在网上查找到解决方案。</li>
+</ul>
+<p>继续引用官方的话就是：</p>
+<pre><code>不可思议的快速 ─ 只要一眨眼静态文件即生成完成
+支持 Markdown
+仅需一道指令即可部署到 GitHub Pages 和 Heroku
+已移植 Octopress 插件
+高扩展性、自订性
+兼容于 Windows, Mac &amp; Linux</code></pre><h2 id="markdown"><a href="#markdown" class="headerlink" title="markdown"></a>markdown</h2><p><a href="https://markdown.tw/" target="_blank" rel="noopener">markdown</a>的目标是实现易读易写，它会使我们更加的关注写作内容而不是样式排版。</p>
+<p>官方的话：</p>
+<pre><code>Markdown 是一种轻量级标记语言，创始人为约翰·格鲁伯（John Gruber）。
+它允许人们“使用易读易写的纯文本格式编写文档，然后转换成有效的XHTML(或者HTML)文档”。</code></pre><h2 id="收获"><a href="#收获" class="headerlink" title="收获"></a>收获</h2><p>搭建这个博客让我熟悉了git指令和git page相关知识，学习了如何使用markdown来编写文档。嗯。。。就这样吧。很久没写过东西了，从小就最烦写作文，所以也导致我走向了苦逼的工科男这条道路上，并且越走越远。看着那些潇洒的文字工作者，其实内心也是有点躁动的，然后马上会有个小人噼里啪啦的把我打醒：“做啥美梦呢，起来搬砖了！”</p>
+<p>万事开头难，这第一篇博客写完我更是觉得写博客其实并没有那么简单，有时候觉得很简单的东西可能写出来就不是那么回事了。一周能抽时间写一篇的话，一年就有50篇，一个月写一篇，一年也有10篇，希望自己能一直坚持下去，加油~</p>
+<p><strong>种一棵树最好的时间是十年前，其次是现在。</strong><br><img src="https://raw.githubusercontent.com/hibiyo/cloudimg/master/blog/hexoUse/4.jfif" alt=""></p>
+]]></content>
+      <categories>
+        <category>杂谈</category>
+      </categories>
+  </entry>
+</search>
